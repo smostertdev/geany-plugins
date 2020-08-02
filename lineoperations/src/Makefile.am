@@ -8,6 +8,8 @@ lineoperations_la_SOURCES = \
 	c-ctype.h \
 	filevercmp.c \
 	filevercmp.h \
+	numcompare.c \
+	numcompare.h \
 	lo_fns.h \
 	lo_fns.c \
 	lo_prefs.h \
