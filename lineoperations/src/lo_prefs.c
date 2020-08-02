@@ -27,12 +27,14 @@ static struct
 	GtkWidget *lexicographic_rb;
 	GtkWidget *collation_rb;
 	GtkWidget *version_rb;
+	GtkWidget *numeric_rb;
 } config_widgets;
 
 
 #define LEXICAL_ORDER 1
 #define COLLATION_ORDER 2
 #define VERSION_ORDER 3
+#define NUMERIC_ORDER 4
 
 
 LineOpsInfo *lo_info = NULL;
@@ -48,7 +50,11 @@ lo_configure_response_cb(GtkDialog *dialog, gint response, gpointer user_data)
 		gchar *data;
 
 		/* Grabbing options that has been set */
-		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(config_widgets.version_rb)))
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(config_widgets.numeric_rb)))
+		{
+			lo_info->compare_type = NUMERIC_ORDER;
+		}
+		else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(config_widgets.version_rb)))
 		{
 			lo_info->compare_type = VERSION_ORDER;
 		}
@@ -106,14 +112,24 @@ lo_configure(G_GNUC_UNUSED GeanyPlugin *plugin, GtkDialog *dialog, G_GNUC_UNUSED
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(config_widgets.collation_rb), FALSE);
 	gtk_container_add(GTK_CONTAINER(vbox), config_widgets.collation_rb);
 
-	config_widgets.version_rb = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(config_widgets.lexicographic_rb),
+	config_widgets.version_rb = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(config_widgets.collation_rb),
 		_("Version Compare"));
 	gtk_button_set_focus_on_click(GTK_BUTTON(config_widgets.version_rb), FALSE);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(config_widgets.version_rb), FALSE);
 	gtk_container_add(GTK_CONTAINER(vbox), config_widgets.version_rb);
 
+	config_widgets.numeric_rb = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(config_widgets.version_rb),
+		_("Numeric Compare"));
+	gtk_button_set_focus_on_click(GTK_BUTTON(config_widgets.numeric_rb), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(config_widgets.numeric_rb), FALSE);
+	gtk_container_add(GTK_CONTAINER(vbox), config_widgets.numeric_rb);
+
 	/* recall selected radio button */
-	if (lo_info->compare_type == VERSION_ORDER)
+	if (lo_info->compare_type == NUMERIC_ORDER)
+	{
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(config_widgets.numeric_rb), TRUE);
+	}
+	else if (lo_info->compare_type == VERSION_ORDER)
 	{
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(config_widgets.version_rb), TRUE);
 	}

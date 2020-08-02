@@ -23,17 +23,23 @@
 #include "lo_fns.h"
 #include "lo_prefs.h"
 #include "filevercmp.h"
+#include "numcompare.h"
 
 #define LEXICAL_ORDER 1
 #define COLLATION_ORDER 2
 #define VERSION_ORDER 3
+#define NUMERIC_ORDER 4
 
 
 /* Get sort function based on user preferences */
 lo_strcmpfns
 getcmpfns(void)
 {
-	if (lo_info->compare_type == VERSION_ORDER)
+	if (lo_info->compare_type == NUMERIC_ORDER)
+	{
+		return numcompare;
+	}
+	else if (lo_info->compare_type == VERSION_ORDER)
 	{
 		return filevercmp;
 	}
